@@ -1,0 +1,42 @@
+----
+Title:"Primer reporte en R Markdown"
+Author:"Diego Ruiz Velasco F. 131872"
+output: html_document
+-------
+
+### Introducción al formato R Markdown
+
+Ejemplo elaborado en `r date()`.
+
+```{r Paquetes}
+library(ggmap)
+```
+
+```{r GenerarDatos, message=FALSE}
+#Llenar información(sólo que esta entre"")
+clave.unica<-rep("131872",3)
+#1:si es mixto; 0:no lo es.
+es.mixto<-c(universidad=1, preparatoria=1,secundaria=1)
+#Llenar con la dirección.
+universidad<-geocode("ITAM")
+preparatoria<-geocode("Universidad La Salle")
+secundaria<-geocode("colegio Benedictino")
+#Generamos la información
+educacion<-rbind(universidad, preparatoria, secundaria)
+educacion<-cbind(clave.unica, es.mixto, educacion)
+```
+
+```{r ObtenciónCoordenadasYMapas, warning=FALSE, message=FALSE}
+limites<-make_bbox(lon, lat, educacion,f=0.7)
+mapa<-get_map(location=limites,
+              maptype="roadmap",
+              source="google")
+```
+
+```{rGraficaLocalizaciones, echo=FALSE}
+ggmap(mapa)+
+  geom_point(data=educacion,
+             aes(x=lon, y=lat),
+             size=4, alpha=0.6, colour="red")
+```
+
